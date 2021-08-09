@@ -4,19 +4,30 @@ services:
   - docker
 
 before_install:
-  - docker build -t hedleygois/multi-docker-course -f Dockerfile.dev .
+  - docker build -t hedleygois/multi-docker-course-test -f ./client/Dockerfile.dev ./client/
 
 script:
-  - docker run hedleygois/multi-docker-course npm run test -- --coverage --watchAll=false
+  - docker run hedleygois/multi-docker-course-test -e CI=true hedleygois/multi-docker-course-test npm test
 
-deploy:
-  provider: elasticbeanstalk
-  region: "us-east-2"
-  app: "docker-react"
-  env: "Dockerreact-env"
-  bucket_name: "elasticbeanstalk-us-east-2-240835633235"
-  bucket_path: "docker-react"
-  on:
-    branch: master
-  access_key_id: $AWS_ACCESS_KEY
-  secret_access_key: $AWS_SECRET_KEY
+after_success:
+  - docker build -t hedleygois/multi-docker-course-client ./client
+  - docker build -t hedleygois/multi-docker-course-nginx ./nginx
+  - docker build -t hedleygois/multi-docker-course-server ./server
+  - docker build -t hedleygois/multi-docker-course-worker ./worker
+  - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_ID" --password-stdin
+  - docker push hedleygois/multi-docker-course-client
+  - docker push hedleygois/multi-docker-course-nginx
+  - docker push hedleygois/multi-docker-course-server
+  - docker push hedleygois/multi-docker-course-worker
+
+# deploy:
+#   provider: elasticbeanstalk
+#   region: "us-east-2"
+#   app: "docker-react"
+#   env: "Dockerreact-env"
+#   bucket_name: "elasticbeanstalk-us-east-2-240835633235"
+#   bucket_path: "docker-react"
+#   on:
+#     branch: master
+#   access_key_id: $AWS_ACCESS_KEY
+#   secret_access_key: $AWS_SECRET_KEY
