@@ -21,7 +21,7 @@ export const Fib = () => {
     }));
   };
 
-  useEffect(() => {
+  useEffect(async () => {
     await fetchValues();
     await fetchIndexes();
   }, []);
