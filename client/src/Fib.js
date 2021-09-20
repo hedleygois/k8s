@@ -10,20 +10,27 @@ export const Fib = () => {
 
   const fetchValues = async () => {
     const values = await axios.get("/api/values/current");
-    setState((state) => ({ ...state, values: values.data }));
+    console.log(values.data)
+    console.log(typeof values.data)
+    setState((state) => ({ ...state, values: typeof values.data === "string" ? state.values : values.data }));
   };
 
   const fetchIndexes = async () => {
     const seenIndexes = await axios.get("/api/values/all");
+    console.log(seenIndexes.data)
+    console.log(typeof seenIndexes.data)
     setState((state) => ({
       ...state,
-      seenIndexes: seenIndexes.data,
+      seenIndexes: typeof seenIndexes.data === "string" ? state.seenIndexes : seenIndexes.data,
     }));
   };
 
-  useEffect(async () => {
-    await fetchValues();
-    await fetchIndexes();
+  useEffect(() => {
+    async function fetchData() {
+      await fetchValues();
+      await fetchIndexes();
+    }
+    fetchData();
   }, []);
 
   const handleSubmit = async (event) => {
@@ -37,7 +44,7 @@ export const Fib = () => {
 
   const renderSeenIndexes = () => {
     return (state.seenIndexes ?? []).map(({ number }) => number).join(", ");
-  }
+  };
 
   const renderValues = () => {
     const entries = [];
@@ -51,24 +58,24 @@ export const Fib = () => {
     }
 
     return entries;
-  }
+  };
 
   return (
-      <div>
-        <form onSubmit={handleSubmit}>
-          <label>Enter your index:</label>
-          <input
-            value={state.index}
-            onChange={(event) => setState({ index: event.target.value })}
-          />
-          <button>Submit</button>
-        </form>
+    <div>
+      <form onSubmit={handleSubmit}>
+        <label>Enter your index:</label>
+        <input
+          value={state.index}
+          onChange={(event) => setState(state => ({ ...state, index: event.target.value }))}
+        />
+        <button>Submit</button>
+      </form>
 
-        <h3>Indexes I have seen:</h3>
-        {renderSeenIndexes()}
+      <h3>Indexes I have seen:</h3>
+      {renderSeenIndexes()}
 
-        <h3>Calculated Values:</h3>
-        {renderValues()}
-      </div>
-  )
+      <h3>Calculated Values:</h3>
+      {renderValues()}
+    </div>
+  );
 };

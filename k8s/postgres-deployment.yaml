@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: postgres
+  template:
+    metadata:
+      labels:
+        component: postgres
+    spec:
+      volumes:
+        - name: postgres-storage
+          persistentvolumeClaim:
+            claimName: database-persistent-volume
+      containers:
+        - name: postgres
+          image: postgres
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+              # This subpath is needed for postgres
+              # This means that every piece of data inside the persistent volume will go to /var/lib/postgresql/data
+              # And this directory will be nested inside another onne called postgres (it's very specific for postgres)
+              subPath: postgres
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"

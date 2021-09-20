@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: database-persistent-volume
+spec:
+  resources:
+    requests:
+      storage: 2Gi
+      # https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
+  volumeMode: Filesystem
+  accessModes:
+    # https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
+    - ReadWriteOnce

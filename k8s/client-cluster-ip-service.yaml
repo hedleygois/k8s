@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  # ClusterIPs provide access to whatever is behind them but only inside of the cluster! Not to the outside world
+  name: client-cluster-ip-service
+spec:
+  type: ClusterIP
+  selector:
+    component: web
+  ports:
+  - port: 3000 # Port that he rest of the cluster has to access
+    targetPort: 3000 # Port of the service behindd the clusterIp
