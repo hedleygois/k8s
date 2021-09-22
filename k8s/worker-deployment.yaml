@@ -14,8 +14,14 @@ spec:
     spec:
       containers:
       - name: worker
-        image: hedleygois/multi-docker-course-worker
+        image: stephengrider/multi-worker
+        env:
+          - name: REDIS_HOST
+            value: redis-cluster-ip
+          - name: REDIS_PORT
+            value: "6379"
         resources:
           limits:
-            memory: "129Mi"
-            cpu: "500m"
+            memory: "128Mi"
+            cpu: "128m"
+      

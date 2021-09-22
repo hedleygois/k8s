@@ -14,10 +14,10 @@ spec:
     spec:
       containers:
       - name: web
-        image: hedleygois/multi-docker-course-client
+        image: stephengrider/multi-client
         resources:
           limits:
             memory: "128Mi"
-            cpu: "500m"
+            cpu: "128m"
         ports:
         - containerPort: 3000

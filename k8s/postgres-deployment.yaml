@@ -14,13 +14,20 @@ spec:
     spec:
       volumes:
         - name: postgres-storage
-          persistentvolumeClaim:
+          persistentVolumeClaim:
             claimName: database-persistent-volume
       containers:
         - name: postgres
           image: postgres
           ports:
             - containerPort: 5432
+          env:
+            - name: PGPASSWORD
+              valueFrom: 
+                secretKeyRef:
+                  name: pgpassword
+                  # The name and the key do not have to match. That's a coincidence
+                  key: PGPASSWORD
           volumeMounts:
             - name: postgres-storage
               mountPath: /var/lib/postgresql/data
@@ -31,4 +38,4 @@ spec:
           resources:
             limits:
               memory: "128Mi"
-              cpu: "500m"
+              cpu: "128m"

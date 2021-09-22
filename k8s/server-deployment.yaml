@@ -14,10 +14,33 @@ spec:
     spec:
       containers:
       - name: server
-        image: hedleygois/multi-docker-course-server
+        image: stephengrider/multi-server
+        ports:
+        - containerPort: 5000
+        env:
+          - name: REDIS_HOST
+            value: redis-cluster-ip
+          - name: REDIS_PORT
+            value: "6379"
+          - name: PGUSER
+            value: postgres
+          - name: PGHOST
+            value: postgres-cluster-ip
+          - name: PGPORT
+            value: "5432"
+          - name: PGDATABASE
+            value: postgres
+          # We won't create a PGPASSWORD because that's not nice, right
+          # So we have to create a secret
+          # Secrets cannot be create with a yaml file instead we have to run an imperative command
+          # kubectl create secret generic (type of secret) <secret-name> --from-literal key=value (we can pass more than one key/value)
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: pgpassword
+                # The name and the key do not have to match. That's a coincidence
+                key: PGPASSWORD
         resources:
           limits:
             memory: "128Mi"
-            cpu: "500m"
-        ports:
-        - containerPort: 5000
+            cpu: "128m"
